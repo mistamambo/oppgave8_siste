@@ -1,30 +1,39 @@
 import client from '../client'
 
 const movie = `
+_id,
 title,
-"actor": actor->name.current,
-"slug": slug2.current,
+"actor": actor->actor,
+"slug": slug.current,
 tekst,
-"poster": poster{asset->{url}},
-"actor2": actor2->name.current,
+"poster": Bilde{asset->{url}},
 `
 
 const actor = `
+_id,
 actor,
 "slug": name.current,
 actorTekst,
 "poster": poster{asset->{url}},
-"movie": movie->slug2.current,
+"movie": movie->slug.current,
 `
 
-export async function getMovies (title) {
-    const data = await client.fetch(`*[_type == "movie"]{${movie}}`)
-    console.log(data);
-    return data
+export const getMovies = async () => {
+	const data = await client.fetch(`*[_type == "movie"]{${movie}}`)
+	return data
 }
 
-export async function getActor () {
-    const data = await client.fetch(`*[_type == "actor"]{${actor}}`)
-    console.log(data);
-    return data
+export const getMovie = async (slug) => {
+	const data = await client.fetch(`*[_type == "movie" && slug.current == $slug]{${movie}}`, { slug });
+	return data;
+};
+
+export const getActor = async (slug) => {
+	const data = await client.fetch(`*[_type == "actor" && name.current == $slug]{${actor}}`, { slug });
+	return data;
+};
+
+export const getActors = async () => {
+	const data = await client.fetch(`*[_type == "actor"]{${actor}}`)
+	return data
 }

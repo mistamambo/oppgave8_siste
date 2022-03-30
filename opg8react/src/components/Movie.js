@@ -1,27 +1,35 @@
+import { useEffect, useState } from 'react';
 import { Link, useParams } from "react-router-dom"
+import { getMovie } from '../lib/services/movieService';
 
-const Movie = ({data}) => {
+const Movie = () => {
+	const [data, setData] = useState();
 
-    const {name} = useParams();
-    console.log(name);
+	const { name } = useParams()
 
-    const movieListe = data.find((movieL)=> {
-        return movieL.slug === name
-    })
+	const getMovieBySlug = async () => {
+		const movieDetail = await getMovie(name)
+		setData(...movieDetail)
 
-    return (
-        <>
+	}
 
-        <article className="py-2 px-2">
-            <h1 className="font-bold text-xl">{movieListe.title}</h1>
-            { movieListe.actor2 !=null ?  ( <h3 className="font-bold mb-3"> Movie Stars: {movieListe.actor}  and {movieListe?.actor2}</h3>) : (<h3 className="font-bold"> Movie Star: {movieListe.actor} </h3>) }
-            <p className="mb-3">{movieListe.tekst}</p>
-
-            <button className="mb-3"><Link to="/movies" className="bg-orange-500 text-sm text-blue-50 py-2 px-2 rounded-lg">Back to movies</Link></button>
-        </article>
+	useEffect(() => {
+		getMovieBySlug()
+	}, []);
 
 
-        </>
-    )
+
+	return (
+		<>
+			<article className="py-2 px-2">
+				<h1 className="font-bold text-xl">{data?.title}</h1>
+				<h3 className="font-bold"> Movie Star: {data?.actor} </h3>
+				<p className="mb-3">{data?.tekst}</p>
+				<button className="mb-3">
+					<Link to="/movies" className="bg-orange-500 text-sm text-blue-50 py-2 px-2 rounded-lg">Back to movies</Link>
+				</button>
+			</article>
+		</>
+	)
 }
 export default Movie
